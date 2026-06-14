@@ -1,5 +1,9 @@
 package com.example.membershipProgram.state;
 
-public interface ISubscriptionState {
+import com.example.membershipProgram.model.Subscription;
 
+public interface ISubscriptionState {
+    void onCancel(Subscription subscription);
+    void onExpire(Subscription subscription);
+    void onRenew(Subscription subscription);
 }
