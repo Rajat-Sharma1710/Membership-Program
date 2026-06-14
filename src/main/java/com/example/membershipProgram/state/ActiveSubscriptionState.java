@@ -3,6 +3,7 @@ package com.example.membershipProgram.state;
 import java.time.LocalDate;
 
 import com.example.membershipProgram.model.Subscription;
+import com.example.membershipProgram.model.enums.PlanType;
 import com.example.membershipProgram.model.enums.SubscriptionStatus;
 
 public class ActiveSubscriptionState implements ISubscriptionState{
@@ -19,7 +20,15 @@ public class ActiveSubscriptionState implements ISubscriptionState{
     }
 
     @Override
-    public void onRenew(Subscription subscription) {
-        // What endDate should I write here ?
+    public void onRenew(Subscription subscription, PlanType planType) {
+        LocalDate endDate = subscription.getEndDate();
+
+        switch(planType) {
+            case MONTHLY -> endDate = endDate.plusMonths(1);
+            case QUARTERLY -> endDate = endDate.plusMonths(3);
+            case YEARLY -> endDate = endDate.plusMonths(12);
+        }
+
+        subscription.setEndDate(endDate);
     }
 }

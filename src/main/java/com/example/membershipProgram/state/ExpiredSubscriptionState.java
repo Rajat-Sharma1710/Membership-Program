@@ -1,6 +1,7 @@
 package com.example.membershipProgram.state;
 
 import com.example.membershipProgram.model.Subscription;
+import com.example.membershipProgram.model.enums.PlanType;
 
 public class ExpiredSubscriptionState implements ISubscriptionState{
 
@@ -15,7 +16,7 @@ public class ExpiredSubscriptionState implements ISubscriptionState{
     }
 
     @Override
-    public void onRenew(Subscription subscription) {
+    public void onRenew(Subscription subscription, PlanType planType) {
         throw new IllegalStateException("Cannot renew. Membership is expired");
     }
 }

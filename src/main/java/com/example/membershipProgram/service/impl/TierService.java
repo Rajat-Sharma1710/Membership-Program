@@ -46,13 +46,13 @@ public class TierService implements ITierSubscriptionService    {
             newTierType).orElse(null);
         if(currentPrice > newPricingCatalogue.getPrice()) {
             // User should be refunded as choosing a cheaper plan....
-            } else {
-                diff = newPricingCatalogue.getPrice() - currentPrice;
-                // User have to pay this extra diff
-            }
+        } else {
+            diff = newPricingCatalogue.getPrice() - currentPrice;
+            // User have to pay this extra diff
+        }
 
-            sub.setPricingCatalogue(newPricingCatalogue);
-            return subscriptionRepository.save(sub);
+        sub.setPricingCatalogue(newPricingCatalogue);
+        return subscriptionRepository.save(sub);
     }
 
     @Override

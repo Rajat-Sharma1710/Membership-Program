@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.membershipProgram.factory.SubscriptionStateFactory;
 import com.example.membershipProgram.model.PricingCatalogue;
 import com.example.membershipProgram.model.Subscription;
 import com.example.membershipProgram.model.User;
@@ -14,7 +15,6 @@ import com.example.membershipProgram.repository.PricingCatalogueRepository;
 import com.example.membershipProgram.repository.SubscriptionRepository;
 import com.example.membershipProgram.repository.UserRepository;
 import com.example.membershipProgram.service.IUserService;
-import com.example.membershipProgram.state.ISubscriptionState;
 
 @Service
 public class UserService implements IUserService{
@@ -27,9 +27,6 @@ public class UserService implements IUserService{
 
     @Autowired
     private PricingCatalogueRepository pricingCatalogueRepository;
-
-    @Autowired
-    private ISubscriptionState currentState;
 
     @Override
     public Subscription subscribe(Long userId, SubscribeRequestDto requestDto) {
@@ -79,7 +76,8 @@ public class UserService implements IUserService{
 
         Subscription currSubscription = user.getCurrentSubscription();
         
-        currentState.onCancel(currSubscription);
+        // calling state internally, client is unaware of this...
+        SubscriptionStateFactory.getCurrentSubscriptionState(currSubscription).onCancel(currSubscription);
         subscriptionRepository.save(currSubscription);
 
         user.setCurrentSubscription(null);

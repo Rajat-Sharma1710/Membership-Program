@@ -3,6 +3,7 @@ package com.example.membershipProgram.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.membershipProgram.factory.SubscriptionStateFactory;
 import com.example.membershipProgram.model.PricingCatalogue;
 import com.example.membershipProgram.model.Subscription;
 import com.example.membershipProgram.model.User;
@@ -46,13 +47,16 @@ public class PlanService implements IPlanSubscriptionService{
         PricingCatalogue newPricingCatalogue = findPricingCatalogue(sub.getPricingCatalogue().getTierType(), newPlanType);
         if(currentPrice > newPricingCatalogue.getPrice()) {
             // User should be refunded as choosing a cheaper plan....
-            } else {
-                diff = newPricingCatalogue.getPrice() - currentPrice;
-                // User have to pay this extra diff
-            }
+        } else {
+            diff = newPricingCatalogue.getPrice() - currentPrice;
+            // User have to pay this extra diff
+        }
 
-            sub.setPricingCatalogue(newPricingCatalogue);
-            return subscriptionRepository.save(sub);
+        sub.setPricingCatalogue(newPricingCatalogue);
+        // calling state internally, client is unaware of this...
+        SubscriptionStateFactory.getCurrentSubscriptionState(sub).onRenew(sub, newPlanType);
+
+        return subscriptionRepository.save(sub);
     }
 
     private PricingCatalogue findPricingCatalogue(TierType tierType, PlanType planType) {
