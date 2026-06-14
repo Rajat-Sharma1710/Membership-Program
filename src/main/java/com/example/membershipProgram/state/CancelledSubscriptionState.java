@@ -1,23 +1,21 @@
 package com.example.membershipProgram.state;
 
 import com.example.membershipProgram.model.Subscription;
+import com.example.membershipProgram.model.enums.SubscriptionStatus;
 
 public class CancelledSubscriptionState implements ISubscriptionState{
     @Override
     public void onCancel(Subscription subscription) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onCancel'");
+       throw new IllegalStateException("Membership is already cancelled");
     }
 
     @Override
     public void onExpire(Subscription subscription) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onExpire'");
+        subscription.setStatus(SubscriptionStatus.EXPIRED);
     }
 
     @Override
     public void onRenew(Subscription subscription) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onRenew'");
+        throw new IllegalStateException("Cannot renew a cancelled subcription.");
     }
 }

@@ -7,7 +7,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +26,9 @@ public class User {
     private long id;
     private String name;
     private String email;
+
+    @OneToOne
+    @JoinColumn(name = "current_subscription_id")
     private Subscription currentSubscription;
 
     @OneToMany(mappedBy = "user")

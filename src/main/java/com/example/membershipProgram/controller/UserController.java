@@ -1,7 +1,5 @@
 package com.example.membershipProgram.controller;
 
-import java.net.http.HttpClient;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +10,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.membershipProgram.model.Subscription;
 import com.example.membershipProgram.model.User;
+import com.example.membershipProgram.model.dto.SubscribeRequestDto;
+import com.example.membershipProgram.model.enums.PlanType;
+import com.example.membershipProgram.model.enums.TierType;
+import com.example.membershipProgram.service.impl.PlanService;
+import com.example.membershipProgram.service.impl.TierService;
 import com.example.membershipProgram.service.impl.UserService;
 
 @RestController
@@ -24,7 +29,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/${id}")
+    @Autowired
+    private PlanService planService;
+
+    @Autowired
+    private TierService tierService;
+
+    @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User user = userService.getUserById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
@@ -47,4 +58,29 @@ public class UserController {
         userService.deleteUserById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("/subscribe/{userId}")
+    public ResponseEntity<Subscription> subscribe(@PathVariable Long userId, @RequestBody SubscribeRequestDto dto) {
+        Subscription subscription = userService.subscribe(userId, dto);
+        return new ResponseEntity<>(subscription, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/cancelSubcription/{userId}")
+    public ResponseEntity<Subscription> cancelSubcription(@PathVariable Long userId) {
+        Subscription subscription = userService.cancelSubscription(userId);
+        return ResponseEntity.ok(subscription);
+    }
+
+    @PutMapping("/changePlan/{userId}")
+    public ResponseEntity<Subscription> changePlan(@PathVariable Long userId, @RequestParam PlanType planType) {
+        Subscription subscription = planService.changePlan(userId, planType);
+        return ResponseEntity.ok(subscription);
+    }
+
+    @PutMapping("/changeTier/{userId}")
+    public ResponseEntity<Subscription> changeTier(@PathVariable Long userId, @RequestParam TierType tierType) {
+        Subscription subscription = tierService.upgradeTier(userId, tierType);
+        return ResponseEntity.ok(subscription);
+    }
+
 }

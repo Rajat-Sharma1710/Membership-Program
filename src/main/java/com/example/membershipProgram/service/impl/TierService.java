@@ -10,6 +10,7 @@ import com.example.membershipProgram.model.enums.SubscriptionStatus;
 import com.example.membershipProgram.model.enums.TierType;
 import com.example.membershipProgram.repository.PricingCatalogueRepository;
 import com.example.membershipProgram.repository.SubscriptionRepository;
+import com.example.membershipProgram.repository.UserRepository;
 import com.example.membershipProgram.service.ITierSubscriptionService;
 
 @Service
@@ -21,29 +22,37 @@ public class TierService implements ITierSubscriptionService    {
     @Autowired
     private SubscriptionRepository subscriptionRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
-    public Subscription upgradeTier(User user, TierType newTierType) {
+    public Subscription upgradeTier(Long userId, TierType newTierType) {
         /*
             Only active subscribers can change the tier and the ones not at higher tier already
         */
-       if(!canUpgradeTier(user, newTierType)) return null;
-
-
-       Subscription sub = user.getCurrentSubscription();
-       double currentPrice = sub.getPricingCatalogue().getPrice();
-       double diff = 0;
-
-       PricingCatalogue newPricingCatalogue = pricingCatalogueRepository.findByPlanTypeAndTierType(sub.getPricingCatalogue().getPlanType(),
-        newTierType).orElse(null);
-       if(currentPrice > newPricingCatalogue.getPrice()) {
-        // User should be refunded as choosing a cheaper plan....
-        } else {
-            diff = newPricingCatalogue.getPrice() - currentPrice;
-            // User have to pay this extra diff
+        User user = userRepository.findById(userId).orElse(null);
+        if(user == null) {
+            System.out.println("User must not be null!");
+            return null;
         }
+        if(!canUpgradeTier(user, newTierType)) return null;
 
-        sub.setPricingCatalogue(newPricingCatalogue);
-        return subscriptionRepository.save(sub);
+
+        Subscription sub = user.getCurrentSubscription();
+        double currentPrice = sub.getPricingCatalogue().getPrice();
+        double diff = 0;
+
+        PricingCatalogue newPricingCatalogue = pricingCatalogueRepository.findByPlanTypeAndTierType(sub.getPricingCatalogue().getPlanType(),
+            newTierType).orElse(null);
+        if(currentPrice > newPricingCatalogue.getPrice()) {
+            // User should be refunded as choosing a cheaper plan....
+            } else {
+                diff = newPricingCatalogue.getPrice() - currentPrice;
+                // User have to pay this extra diff
+            }
+
+            sub.setPricingCatalogue(newPricingCatalogue);
+            return subscriptionRepository.save(sub);
     }
 
     @Override

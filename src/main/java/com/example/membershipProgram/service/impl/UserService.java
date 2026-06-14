@@ -8,10 +8,13 @@ import org.springframework.stereotype.Service;
 import com.example.membershipProgram.model.PricingCatalogue;
 import com.example.membershipProgram.model.Subscription;
 import com.example.membershipProgram.model.User;
+import com.example.membershipProgram.model.dto.SubscribeRequestDto;
 import com.example.membershipProgram.model.enums.SubscriptionStatus;
+import com.example.membershipProgram.repository.PricingCatalogueRepository;
 import com.example.membershipProgram.repository.SubscriptionRepository;
 import com.example.membershipProgram.repository.UserRepository;
 import com.example.membershipProgram.service.IUserService;
+import com.example.membershipProgram.state.ISubscriptionState;
 
 @Service
 public class UserService implements IUserService{
@@ -22,10 +25,23 @@ public class UserService implements IUserService{
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PricingCatalogueRepository pricingCatalogueRepository;
+
+    @Autowired
+    private ISubscriptionState currentState;
+
     @Override
-    public Subscription subscribe(User user, PricingCatalogue pricingCatalogue) {
+    public Subscription subscribe(Long userId, SubscribeRequestDto requestDto) {
         // First create a new Subscription and save it in a repo
         // then save user
+        User user = userRepository.findById(userId).orElse(null);
+        PricingCatalogue pricingCatalogue = pricingCatalogueRepository.findByPlanTypeAndTierType(requestDto.getPlanType(), requestDto.getTierType())
+        .orElse(null);
+        if(user == null || pricingCatalogue == null) {
+            System.out.println("User or catalogue must not be null!");
+            return null;
+        }
         if(user.getCurrentSubscription() != null 
         && user.getCurrentSubscription().getStatus() == SubscriptionStatus.ACTIVE) {
             System.out.println("User already a member of FirstClub");
@@ -33,11 +49,11 @@ public class UserService implements IUserService{
         }
 
         Subscription subscription = new Subscription();
-        subscription.setActive(true);
         subscription.setStartDate(LocalDate.now());
         subscription.setEndDate(calculateEndDate(pricingCatalogue));
         subscription.setPricingCatalogue(pricingCatalogue);
         subscription.setStatus(SubscriptionStatus.ACTIVE);
+        subscription.setUser(user);
 
         Subscription savedSub = subscriptionRepository.save(subscription);
         user.setCurrentSubscription(savedSub);
@@ -48,15 +64,24 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public Subscription cancelSubscription(User user) {
-        if(user.getCurrentSubscription() == null) {
+    public Subscription cancelSubscription(Long userId) {
+
+        User user = userRepository.findById(userId).orElse(null);
+        if(user == null || user.getCurrentSubscription() == null) {
             System.out.println("No active subscription");
             return null;
         }
 
+        if(user.getCurrentSubscription().getStatus() != SubscriptionStatus.ACTIVE) {
+            System.out.println("Membership is already either cancelled or expired");
+            return null;
+        }
+
         Subscription currSubscription = user.getCurrentSubscription();
-        subscriptionRepository.deleteById(currSubscription.getId());
         
+        currentState.onCancel(currSubscription);
+        subscriptionRepository.save(currSubscription);
+
         user.setCurrentSubscription(null);
         userRepository.save(user);
         return currSubscription;
@@ -90,7 +115,7 @@ public class UserService implements IUserService{
                 endDate = endDate.plusMonths(1);
                 break;
             case QUARTERLY:
-                endDate = endDate.plusMonths(4);
+                endDate = endDate.plusMonths(3);
                 break;
             case YEARLY:
                 endDate = endDate.plusMonths(12);

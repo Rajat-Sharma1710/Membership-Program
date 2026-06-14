@@ -32,8 +32,7 @@ public class Subscription {
     @ManyToOne
     @JoinColumn(name = "pricing_catalogue_id")
     private PricingCatalogue pricingCatalogue;
-    private boolean isActive;
-
+    
     @Enumerated(EnumType.STRING)
     private SubscriptionStatus status;
 

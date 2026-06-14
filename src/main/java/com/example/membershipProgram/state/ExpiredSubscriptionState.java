@@ -6,19 +6,16 @@ public class ExpiredSubscriptionState implements ISubscriptionState{
 
     @Override
     public void onCancel(Subscription subscription) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onCancel'");
+        throw new IllegalStateException("Cannot cancel. Membership is expired");    
     }
 
     @Override
     public void onExpire(Subscription subscription) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onExpire'");
+        throw new IllegalStateException("Membership is already expired");
     }
 
     @Override
     public void onRenew(Subscription subscription) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onRenew'");
+        throw new IllegalStateException("Cannot renew. Membership is expired");
     }
 }

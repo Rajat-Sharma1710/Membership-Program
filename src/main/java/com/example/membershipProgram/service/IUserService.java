@@ -1,14 +1,14 @@
 package com.example.membershipProgram.service;
 
-import com.example.membershipProgram.model.PricingCatalogue;
 import com.example.membershipProgram.model.Subscription;
 import com.example.membershipProgram.model.User;
+import com.example.membershipProgram.model.dto.SubscribeRequestDto;
 
 public interface IUserService {
 
-    Subscription subscribe(User user, PricingCatalogue pricingCatalogue);
+    Subscription subscribe(Long userId, SubscribeRequestDto subscribeRequestDto);
 
-    Subscription cancelSubscription(User user);
+    Subscription cancelSubscription(Long userId);
 
     User getUserById(Long id);
 

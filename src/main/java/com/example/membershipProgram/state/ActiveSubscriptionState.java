@@ -1,23 +1,25 @@
 package com.example.membershipProgram.state;
 
+import java.time.LocalDate;
+
 import com.example.membershipProgram.model.Subscription;
+import com.example.membershipProgram.model.enums.SubscriptionStatus;
 
 public class ActiveSubscriptionState implements ISubscriptionState{
     @Override
     public void onCancel(Subscription subscription) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onCancel'");
+        subscription.setStatus(SubscriptionStatus.CANCELLED);
+        subscription.setEndDate(LocalDate.now());
     }
 
     @Override
     public void onExpire(Subscription subscription) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onExpire'");
+        subscription.setStatus(SubscriptionStatus.EXPIRED);
+        subscription.setEndDate(LocalDate.now());
     }
 
     @Override
     public void onRenew(Subscription subscription) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onRenew'");
+        // What endDate should I write here ?
     }
 }

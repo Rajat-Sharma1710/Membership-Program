@@ -22,7 +22,7 @@ public class PriceCatalogueController {
     @Autowired
     private PriceCatalogueService pricingCatalogueService;
 
-    @GetMapping("/${id}")
+    @GetMapping("/{id}")
     public ResponseEntity<PricingCatalogue> getUserById(@PathVariable Long id) {
         PricingCatalogue user = pricingCatalogueService.getPriceCatalogueById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
