@@ -1,5 +1,5 @@
 package com.example.membershipProgram.service;
 
-public class TierService {
+public interface IUserService {
 
 }
