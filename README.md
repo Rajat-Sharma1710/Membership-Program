@@ -4,13 +4,13 @@ A Spring Boot backend system for a subscription-based **Membership Program** wit
 
 ---
 
-## 📌 Problem Statement
+## Problem Statement
 
 Design a backend system for FirstClub that allows users to subscribe to membership plans with tiered benefits.
 
 ---
 
-## ✅ Features Implemented
+## Features Implemented
 
 - Subscribe to a membership plan + tier combination (Monthly / Quarterly / Yearly × Silver / Gold / Platinum)
 - Cancel an active subscription at any time
@@ -22,7 +22,7 @@ Design a backend system for FirstClub that allows users to subscribe to membersh
 
 ---
 
-## 🏗️ Design Decisions & Abstractions
+## Design Decisions & Abstractions
 
 ### Class Diagram
 <img width="1317" height="654" alt="Screenshot 2026-06-15 at 10 10 05 AM" src="https://github.com/user-attachments/assets/91af2768-4da2-47f2-a046-353b72317d18" />
@@ -51,7 +51,7 @@ Design a backend system for FirstClub that allows users to subscribe to membersh
 
 ---
 
-## 🗂️ Package Structure
+## Package Structure
 
 ```
 com.example.membershipProgram
@@ -68,7 +68,7 @@ com.example.membershipProgram
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - Java 17
 - Spring Boot
@@ -78,7 +78,7 @@ com.example.membershipProgram
 
 ---
 
-## 📡 API Overview
+## API Overview
 
 ### User APIs
 | Method | Endpoint | Description |
