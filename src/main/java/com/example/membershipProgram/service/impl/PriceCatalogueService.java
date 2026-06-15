@@ -1,6 +1,7 @@
 package com.example.membershipProgram.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.example.membershipProgram.model.PricingCatalogue;
@@ -24,7 +25,13 @@ public class PriceCatalogueService implements IPriceCatalogueService{
 
     @Override
     public PricingCatalogue updatePriceCatalogue(PricingCatalogue catalogue, Long id) {
-        return pricingCatalogueRepository.save(catalogue);
+        PricingCatalogue existingCatalogue = pricingCatalogueRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Catalogue not found with ID: " + id));
+
+        existingCatalogue.setPrice(catalogue.getPrice());
+        existingCatalogue.setPlanType(catalogue.getPlanType());
+        existingCatalogue.setTierType(catalogue.getTierType());
+        return pricingCatalogueRepository.save(existingCatalogue);
     }
 
     @Override

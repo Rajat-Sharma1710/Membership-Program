@@ -1,5 +1,8 @@
 package com.example.membershipProgram.service;
 
+import java.util.List;
+
+import com.example.membershipProgram.model.Order;
 import com.example.membershipProgram.model.Subscription;
 import com.example.membershipProgram.model.User;
 import com.example.membershipProgram.model.dto.SubscribeRequestDto;
@@ -17,4 +20,6 @@ public interface IUserService {
     User updateUser(User user, Long id);
 
     void deleteUserById(Long id);
+
+    List<Order> getAllOrders(Long id);
 }

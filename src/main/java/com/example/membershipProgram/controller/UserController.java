@@ -1,5 +1,8 @@
 package com.example.membershipProgram.controller;
 
+import java.util.List;
+
+import com.example.membershipProgram.model.dto.OrderResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.membershipProgram.model.Order;
 import com.example.membershipProgram.model.Subscription;
 import com.example.membershipProgram.model.User;
 import com.example.membershipProgram.model.dto.SubscribeRequestDto;
@@ -39,6 +43,15 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User user = userService.getUserById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @GetMapping("/allOrders/{id}")
+    public ResponseEntity<List<OrderResponseDto>> getAllOrders(@PathVariable Long id) {
+        List<Order> orders = userService.getAllOrders(id);
+        List<OrderResponseDto> response = orders.stream()
+                .map(OrderResponseDto::new)
+                .toList();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping

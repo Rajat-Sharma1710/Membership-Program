@@ -1,11 +1,13 @@
 package com.example.membershipProgram.service.impl;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.membershipProgram.factory.SubscriptionStateFactory;
+import com.example.membershipProgram.model.Order;
 import com.example.membershipProgram.model.PricingCatalogue;
 import com.example.membershipProgram.model.Subscription;
 import com.example.membershipProgram.model.User;
@@ -95,9 +97,27 @@ public class UserService implements IUserService{
         return userRepository.save(user);
     }
 
+    /*
+        Seems wrong to copying every order and subscription history on every
+        update, re-adding it to by pass the hibernate exception as of now...
+     */
     @Override
     public User updateUser(User user, Long id) {
-        return userRepository.save(user);
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
+
+        existingUser.setName(user.getName());
+        existingUser.setEmail(user.getEmail());
+        if(user.getOrders() != null && !user.getOrders().isEmpty()) {
+            existingUser.getOrders().clear();
+            existingUser.getOrders().addAll(user.getOrders());
+        }
+        existingUser.setCurrentSubscription(user.getCurrentSubscription());
+        if(user.getSubscriptionHistory() != null && !user.getSubscriptionHistory().isEmpty()) {
+            existingUser.getSubscriptionHistory().clear();
+            existingUser.getSubscriptionHistory().addAll(user.getSubscriptionHistory());
+        }
+        return userRepository.save(existingUser);
     }
 
     @Override
@@ -123,5 +143,15 @@ public class UserService implements IUserService{
         }
 
         return endDate;
+    }
+
+    @Override
+    public List<Order> getAllOrders(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if(user == null) {
+            System.out.println("User not found!");
+            return null;
+        }
+        return user.getOrders();
     }
 }
